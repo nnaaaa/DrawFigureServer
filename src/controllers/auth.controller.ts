@@ -50,7 +50,7 @@ export class AuthController {
       "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
 
-    return res
+    return 'Success'
   }
 
   @post('/auth/signup')

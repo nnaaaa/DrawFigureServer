@@ -59,3 +59,12 @@ export class JWTService {
     return customerProfile;
   }
 }
+
+export const SECURITY_SCHEME_SPEC =
+  [{
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
+    }
+  }];

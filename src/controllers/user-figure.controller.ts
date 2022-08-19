@@ -1,14 +1,17 @@
 import {authenticate, AuthenticationBindings} from '@loopback/authentication';
+import {OPERATION_SECURITY_SPEC} from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
 import {
+  Count,
+  CountSchema,
   repository
 } from '@loopback/repository';
 import {
   get,
-  getModelSchemaRef, post,
+  getModelSchemaRef, param, patch, post,
   requestBody
 } from '@loopback/rest';
-import {securityId, UserProfile} from '@loopback/security';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {
   Figure
 } from '../models';
@@ -37,10 +40,12 @@ export class UserFigureController {
     currentUser: UserProfile
   ): Promise<Figure[]> {
 
-    return this.userRepository.figures(currentUser[securityId]).find();
+    return this.userRepository.figures(currentUser[securityId]).find({fields: {userId: false}});
   }
 
+  @authenticate('jwt')
   @post('/users/figures', {
+    security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
         description: 'User model instance',
@@ -49,7 +54,7 @@ export class UserFigureController {
     },
   })
   async create(
-    @inject(AuthenticationBindings.CURRENT_USER)
+    @inject(SecurityBindings.USER)
     currentUser: UserProfile,
     @requestBody({
       content: {
@@ -57,50 +62,40 @@ export class UserFigureController {
           schema: getModelSchemaRef(Figure, {
             title: 'NewFigureInUser',
             exclude: ['id'],
-            optional: ['userId']
           }),
         },
       },
-    }) figure: Omit<Figure, 'id'>,
+    })
+    figure: Omit<Figure, 'id'>,
   ): Promise<Figure> {
     return this.userRepository.figures(currentUser[securityId]).create(figure);
   }
 
-  // @patch('/users/{id}/figures', {
-  //   responses: {
-  //     '200': {
-  //       description: 'User.Figure PATCH success count',
-  //       content: {'application/json': {schema: CountSchema}},
-  //     },
-  //   },
-  // })
-  // async patch(
-  //   @param.path.string('id') id: string,
-  //   @requestBody({
-  //     content: {
-  //       'application/json': {
-  //         schema: getModelSchemaRef(Figure, {partial: true}),
-  //       },
-  //     },
-  //   })
-  //   figure: Partial<Figure>,
-  //   @param.query.object('where', getWhereSchemaFor(Figure)) where?: Where<Figure>,
-  // ): Promise<Count> {
-  //   return this.userRepository.figures(id).patch(figure, where);
-  // }
-
-  // @del('/users/{id}/figures', {
-  //   responses: {
-  //     '200': {
-  //       description: 'User.Figure DELETE success count',
-  //       content: {'application/json': {schema: CountSchema}},
-  //     },
-  //   },
-  // })
-  // async delete(
-  //   @param.path.string('id') id: string,
-  //   @param.query.object('where', getWhereSchemaFor(Figure)) where?: Where<Figure>,
-  // ): Promise<Count> {
-  //   return this.userRepository.figures(id).delete(where);
-  // }
+  @authenticate('jwt')
+  @patch('/users/figures/{id}', {
+    responses: {
+      '200': {
+        description: 'User.Figure PATCH success count',
+        content: {'application/json': {schema: getModelSchemaRef(Figure)}},
+      },
+    },
+  })
+  async patch(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(Figure, {
+            title: 'EditFigureInUser',
+          }),
+        },
+      },
+    })
+    figure: Figure,
+    @param.path.string('id') id: string,
+    @inject(SecurityBindings.USER)
+    currentUser: UserProfile,
+  ) {
+    this.userRepository.figures(currentUser[securityId]).patch(figure, {id})
+    return 'Success'
+  }
 }

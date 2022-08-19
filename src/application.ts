@@ -1,22 +1,21 @@
+import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
 import {BootMixin} from '@loopback/boot';
 import {ApplicationConfig} from '@loopback/core';
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
 import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
+import {
+  RestExplorerBindings,
+  RestExplorerComponent
+} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {MySequence} from './sequence';
-import {AuthenticationComponent, registerAuthenticationStrategy} from '@loopback/authentication';
-import {JWTAuthenticationComponent} from '@loopback/authentication-jwt';
-import {DbDataSource} from './datasources';
-import {MyUserService} from './services/user-service';
-import {JWTService} from './services/jwt-service';
 import {HasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
+import {MySequence} from './sequence';
 import {BcryptHasher} from './services/hash-service';
+import {JWTService} from './services/jwt-service';
+import {MyUserService} from './services/user-service';
 import {JWTStrategy} from './strategies/jwt-strategy';
+import {SECURITY_SCHEME_SPEC} from '@loopback/authentication-jwt';
 
 export {ApplicationConfig};
 
@@ -36,7 +35,10 @@ export class BackendApplication extends BootMixin(
     this.configure(RestExplorerBindings.COMPONENT).to({
       path: '/explorer',
     });
+
     this.setupBinding()
+
+    this.addSecuritySpec();
 
     this.component(AuthenticationComponent);
     registerAuthenticationStrategy(this, JWTStrategy);
@@ -68,5 +70,23 @@ export class BackendApplication extends BootMixin(
     this.bind(TokenServiceBindings.TOKEN_EXPIRES_IN).to(
       TokenServiceConstants.TOKEN_EXPIRES_IN_VALUE,
     );
+  }
+
+  addSecuritySpec(): void {
+    this.api({
+      openapi: '1.0.0',
+      info: {
+        title: 'Server',
+        version: '1.0.0',
+      },
+      paths: {},
+      components: {securitySchemes: SECURITY_SCHEME_SPEC},
+      security: [
+        {
+          jwt: [],
+        },
+      ],
+      servers: [{url: '/'}],
+    });
   }
 }
