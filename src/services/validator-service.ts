@@ -18,11 +18,7 @@ export async function validateCredentials(
   if (foundUser !== null) {
     throw new HttpErrors.UnprocessableEntity('This email already exists');
   }
-  if (credentials.email.length < 8) {
-    throw new HttpErrors.UnprocessableEntity(
-      'Email length should be greater than 8',
-    );
-  }
+  
   if (credentials.password.length < 8) {
     throw new HttpErrors.UnprocessableEntity(
       'Password length should be greater than 8',

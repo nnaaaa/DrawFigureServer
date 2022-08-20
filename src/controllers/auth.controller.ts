@@ -44,21 +44,22 @@ export class AuthController {
     const token = await this.jwtService.generateToken(userProfile);
 
     res.header('accessToken', token)
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
+    // res.header("Access-Control-Allow-Origin", "*");
+    // res.header(
+    //   "Access-Control-Allow-Headers",
+    //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    // );
 
     return 'Success'
   }
 
-  @post('/auth/signup')
+  @post('/auth/register')
   @response(200, {
     description: 'User model instance',
     content: {'application/json': {schema: getModelSchemaRef(User)}},
   })
   async signup(
+    @inject(RestBindings.Http.RESPONSE) res: Response,
     @requestBody({
       content: {
         'application/json': {
@@ -78,15 +79,9 @@ export class AuthController {
 
     const token = await this.jwtService.generateToken(userProfile);
 
-    // this.res.header('accessToken', token)
-    // this.res.header("Access-Control-Allow-Origin", "*");
-    // this.res.header(
-    //   "Access-Control-Allow-Headers",
-    //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    // );
-
-    // return this.res
-    return {token}
+    res.header('accessToken', token)
+ 
+    return 'Success'
   }
 
   @authenticate('jwt')

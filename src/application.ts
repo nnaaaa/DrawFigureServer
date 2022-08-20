@@ -38,8 +38,6 @@ export class BackendApplication extends BootMixin(
 
     this.setupBinding()
 
-    this.addSecuritySpec();
-
     this.component(AuthenticationComponent);
     registerAuthenticationStrategy(this, JWTStrategy);
 
@@ -72,21 +70,4 @@ export class BackendApplication extends BootMixin(
     );
   }
 
-  addSecuritySpec(): void {
-    this.api({
-      openapi: '1.0.0',
-      info: {
-        title: 'Server',
-        version: '1.0.0',
-      },
-      paths: {},
-      components: {securitySchemes: SECURITY_SCHEME_SPEC},
-      security: [
-        {
-          jwt: [],
-        },
-      ],
-      servers: [{url: '/'}],
-    });
-  }
 }

@@ -4,10 +4,8 @@ FROM node:16-slim
 # Set to a non-root built-in user `node`
 USER node
 
-# Create app directory (with user `node`)
-RUN mkdir -p /home/node/app
 
-WORKDIR /home/node/app
+WORKDIR /server
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
@@ -22,7 +20,7 @@ COPY --chown=node . .
 RUN npm run build
 
 # Bind to all network interfaces so that it can be mapped to the host OS
-ENV HOST=0.0.0.0 PORT=3000
+ENV HOST=0.0.0.0 PORT=5000
 
-EXPOSE ${PORT}
+EXPOSE 5000
 CMD [ "node", "." ]
