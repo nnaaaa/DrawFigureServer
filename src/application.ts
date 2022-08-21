@@ -9,7 +9,7 @@ import {
 } from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {HasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './keys';
+import {HasherBindings, TokenServiceBindings, TokenServiceConstants, UserServiceBindings} from './utils/keys';
 import {MySequence} from './sequence';
 import {BcryptHasher} from './services/hash-service';
 import {JWTService} from './services/jwt-service';

@@ -1,14 +1,13 @@
 import {TokenService, UserService} from '@loopback/authentication';
 import {BindingKey} from '@loopback/core';
-import {User} from './models';
-import {Credentials} from './repositories/user.repository';
-import {Hasher} from './services/hash-service';
-// import {PasswordHasher} from './services/hash.password';
-// require('dotenv').config();
+import {User} from '../models';
+import {Credentials} from '../repositories/user.repository';
+import {Hasher} from '../services/hash-service';
+require('dotenv').config();
 
 export namespace TokenServiceConstants {
-  export const TOKEN_SECRET_VALUE = 'myjwtshouldberandom';
-  export const TOKEN_EXPIRES_IN_VALUE = '24h';
+  export const TOKEN_SECRET_VALUE = process.env.TOKEN_SECRET || 'myjwts3cr3t';
+  export const TOKEN_EXPIRES_IN_VALUE = '10m';
 }
 export namespace TokenServiceBindings {
   export const TOKEN_SECRET = BindingKey.create<string>(

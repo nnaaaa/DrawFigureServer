@@ -5,7 +5,7 @@ import { HttpErrors } from '@loopback/rest';
 import { securityId, UserProfile } from '@loopback/security';
 import { UserRepository, Credentials } from '../repositories';
 import { User } from '../models';
-import {HasherBindings} from '../keys';
+import {HasherBindings} from '../utils/keys';
 import {BcryptHasher} from './hash-service';
 
 

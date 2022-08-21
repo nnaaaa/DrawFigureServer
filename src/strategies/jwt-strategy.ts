@@ -5,7 +5,7 @@ import {UserProfile} from '@loopback/security';
 import {Request} from 'express';
 import {ParamsDictionary} from 'express-serve-static-core';
 import {ParsedQs} from 'qs';
-import {TokenServiceBindings} from '../keys';
+import {TokenServiceBindings} from '../utils/keys';
 import {JWTService} from '../services/jwt-service';
 
 export class JWTStrategy implements AuthenticationStrategy {

@@ -2,7 +2,7 @@
 import {inject} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {get, getJsonSchemaRef, getModelSchemaRef, post, Request, requestBody, Response, response, RestBindings} from '@loopback/rest';
-import {HasherBindings, TokenServiceBindings, UserServiceBindings} from '../keys';
+import {HasherBindings, TokenServiceBindings, UserServiceBindings} from '../utils/keys';
 import {User} from '../models';
 import * as _ from 'lodash';
 import {Credentials, UserRepository} from '../repositories';
@@ -13,6 +13,7 @@ import {CredentialsRequestBody} from '../types/credential-schema';
 import {BcryptHasher} from '../services/hash-service';
 import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {UserProfile} from '@loopback/security';
+import { AuthRoute } from '../utils/route';
 
 export class AuthController {
   constructor(
@@ -28,7 +29,7 @@ export class AuthController {
 
   ) { }
 
-  @post('/auth/login')
+  @post(AuthRoute.Login)
   @response(200, {
     description: 'User model instance',
     content: {'application/json': {schema: getModelSchemaRef(User)}},
@@ -44,16 +45,11 @@ export class AuthController {
     const token = await this.jwtService.generateToken(userProfile);
 
     res.header('accessToken', token)
-    // res.header("Access-Control-Allow-Origin", "*");
-    // res.header(
-    //   "Access-Control-Allow-Headers",
-    //   "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    // );
 
     return 'Success'
   }
 
-  @post('/auth/register')
+  @post(AuthRoute.Register)
   @response(200, {
     description: 'User model instance',
     content: {'application/json': {schema: getModelSchemaRef(User)}},
@@ -85,7 +81,7 @@ export class AuthController {
   }
 
   @authenticate('jwt')
-  @get('/auth/me', {
+  @get(AuthRoute.Me, {
     responses: {
       '200': {
         description: 'The current user profile',

@@ -2,8 +2,6 @@ import {authenticate, AuthenticationBindings} from '@loopback/authentication';
 import {OPERATION_SECURITY_SPEC} from '@loopback/authentication-jwt';
 import {inject} from '@loopback/core';
 import {
-  Count,
-  CountSchema,
   repository
 } from '@loopback/repository';
 import {
@@ -16,6 +14,7 @@ import {
   Figure
 } from '../models';
 import {UserRepository} from '../repositories';
+import { UserFigureRoute } from '../utils/route';
 
 export class UserFigureController {
   constructor(
@@ -23,7 +22,7 @@ export class UserFigureController {
   ) { }
 
   @authenticate('jwt')
-  @get('/users/figures', {
+  @get(UserFigureRoute.Find, {
     responses: {
       '200': {
         description: 'Array of User has many Figure',
@@ -44,7 +43,7 @@ export class UserFigureController {
   }
 
   @authenticate('jwt')
-  @post('/users/figures', {
+  @post(UserFigureRoute.Create, {
     security: OPERATION_SECURITY_SPEC,
     responses: {
       '200': {
@@ -68,11 +67,12 @@ export class UserFigureController {
     })
     figure: Omit<Figure, 'id'>,
   ): Promise<Figure> {
-    return this.userRepository.figures(currentUser[securityId]).create(figure);
+    return this.userRepository.figures(currentUser[securityId]).create(figure)
+
   }
 
   @authenticate('jwt')
-  @patch('/users/figures/{id}', {
+  @patch(UserFigureRoute.Update, {
     responses: {
       '200': {
         description: 'User.Figure PATCH success count',
